@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Email</title>
+</head>
+<body>
+    <h1>Email Sender</h1>
+    <form id="emailForm">
+        <label for="orderName">Order Name:</label>
+        <input type="text" id="orderName" name="orderName">
+        <br>
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity">
+        <br>
+        <button type="submit">Send Email</button>
+    </form>
+
+    <script>
+        document.getElementById('emailForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // フォームのデフォルト送信動作を無効化
+
+            const orderName = document.getElementById('orderName').value;
+            const quantity = document.getElementById('quantity').value;
+
+            fetch('http://localhost:5000/send_email', {  // FlaskのエンドポイントにPOST
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    order_name: orderName,
+                    quantity: quantity
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('メール送信に成功しました！');
+                } else {
+                    alert('エラーが発生しました: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('エラー:', error);
+            });
+        });
+    </script>
+</body>
+</html>
